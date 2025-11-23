@@ -1,9 +1,6 @@
-# Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[codz]
+*.py[cod]
 *$py.class
-
-# C extensions
 *.so
 
 # Distribution / packaging
@@ -117,6 +114,7 @@ ipython_config.py
 .pdm-python
 .pdm-build/
 
+# Virtual Environment
 # pixi
 #   Similar to Pipfile.lock, it is generally recommended to include pixi.lock in version control.
 #pixi.lock
@@ -140,7 +138,9 @@ celerybeat.pid
 .venv
 env/
 venv/
+env/
 ENV/
+.venv
 env.bak/
 venv.bak/
 
@@ -159,14 +159,28 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+# Environment variables
+.env
+.env.local
+.env.*.local
 # Pyre type checker
 .pyre/
 
+# Vector stores (binary files)
+vector_store.faiss
+vector_store.pkl
+vector_store/
 # pytype static type analyzer
 .pytype/
 
 # Cython debug symbols
 cython_debug/
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
@@ -174,23 +188,37 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+# OS
+.DS_Store
+Thumbs.db
 
 # Abstra
 # Abstra is an AI-powered process automation framework.
 # Ignore directories containing user credentials, local state, and settings.
 # Learn more at https://abstra.io/docs
 .abstra/
+# Logs
+*.log
 
 # Visual Studio Code
-#  Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
+#  Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore
 #  that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
-#  and can be added to the global gitignore or merged into this file. However, if you prefer, 
+#  and can be added to the global gitignore or merged into this file. However, if you prefer,
 #  you could uncomment the following to ignore the entire vscode folder
 # .vscode/
+# Azure
+.azure/
 
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
 # Ruff stuff:
 .ruff_cache/
 
+# Temporary files
+*.tmp
+temp/
 # PyPI configuration file
 .pypirc
 

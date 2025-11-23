@@ -1,0 +1,187 @@
+{
+  "info": {
+    "name": "Hackaton Talento Tech - Backend",
+    "_postman_id": "b826a6fb-0000-4000-8000-000000000000",
+    "description": "Collection to test endpoints of the FastAPI backend (health, chat, upload_pdf, rebuild, retrieve)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        },
+        "description": "Verifica que la API está en funcionamiento"
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var jsonData = pm.response.json();",
+              "pm.test('Status is ok', function () {",
+              "    pm.expect(jsonData.status).to.eql('ok');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Retrieve - Dev",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/retrieve?query=violencia&k=3",
+          "host": ["{{baseUrl}}"],
+          "path": ["retrieve"],
+          "query": [
+            { "key": "query", "value": "violencia" },
+            { "key": "k", "value": "3" }
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 or 404 (if no index)', function () { pm.expect(pm.response.code).to.be.oneOf([200,404]); });",
+              "if (pm.response.code === 200) { var jsonData = pm.response.json(); pm.test('results array', function () { pm.expect(jsonData.results).to.be.an('array'); }); }"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat (No thread)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"question\": \"¿Qué dice la Ley 1257 de 2008 sobre violencia de género?\" }",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/chat",
+          "host": ["{{baseUrl}}"],
+          "path": ["chat"]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Answer exists', function () { pm.expect(jsonData.answer).to.be.a('string').and.not.empty; });",
+              "pm.test('Sources present', function () { pm.expect(jsonData.sources).to.be.an('array'); });",
+              "pm.test('retrieved_docs_count present', function () { pm.expect(jsonData).to.have.property('retrieved_docs_count'); });",
+              "pm.test('context_used is boolean', function () { pm.expect(typeof jsonData.context_used === 'boolean').to.be.true; });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat - Follow-up (no thread)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{ \"question\": \"Continuando la conversación: ¿Cuáles son las sanciones?\" }",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/chat",
+          "host": ["{{baseUrl}}"],
+          "path": ["chat"]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Answer exists', function () { pm.expect(jsonData.answer).to.be.a('string').and.not.empty; });",
+              "pm.test('Sources present', function () { pm.expect(jsonData.sources).to.be.an('array'); });",
+              "pm.test('retrieved_docs_count present', function () { pm.expect(jsonData).to.have.property('retrieved_docs_count'); });",
+              "pm.test('context_used is boolean', function () { pm.expect(typeof jsonData.context_used === 'boolean').to.be.true; });"
+            ]
+          }
+        }
+      ]
+    }
+    ,
+    {
+      "name": "Upload PDF",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "multipart/form-data" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "{{file_path}}"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/upload_pdf",
+          "host": ["{{baseUrl}}"],
+          "path": ["upload_pdf"]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status 200 or 400 if missing file', function () { pm.expect(pm.response.code).to.be.oneOf([200,400]); });",
+              "if (pm.response.code === 200) { var jsonData = pm.response.json(); pm.test('chunks_added or status', function () { pm.expect(jsonData).to.have.property('chunks_added'); pm.expect(jsonData.status).to.be.oneOf(['success','warning']); }); }"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ]
+}
